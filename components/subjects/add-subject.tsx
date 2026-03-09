@@ -48,7 +48,7 @@ export default function AddSubject() {
         placeholder="Subject name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyPress}
         style={{
           flex: 1,
           border: "1px solid #ddd",

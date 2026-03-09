@@ -64,7 +64,7 @@ export default function AddTopic({ subjectId }: AddTopicProps) {
         placeholder="Topic name"
         value={topicName}
         onChange={(e) => setTopicName(e.target.value)}
-        onKeyPress={(e) => e.key === "Enter" && addTopic()}
+        onKeyDown={(e) => e.key === "Enter" && addTopic()}
         style={{
           flex: 1,
           border: "1px solid #ddd",

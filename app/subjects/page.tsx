@@ -5,7 +5,7 @@ import AddSubject from "@/components/subjects/add-subject"
 
 export default async function SubjectsPage() {
 
-  const res = await fetch("http://localhost:3000/api/subjects", {
+  const res = await fetch("/api/subjects", {
     cache: "no-store"
   })
 
