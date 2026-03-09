@@ -1,5 +1,5 @@
 import { DashboardLayout } from "@/components/dashboard-layout"
-import { SubjectCard } from "@/components/subjects/subject-card"
+import SubjectCard  from "@/components/subjects/subject-card"
 import UploadSubjects from "@/components/subjects/upload-subjects"
 
 export default async function SubjectsPage() {
