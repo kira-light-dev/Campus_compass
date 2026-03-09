@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import AddTopic from "./add-topic"
 
 interface Topic {
 _id: string
@@ -11,9 +12,10 @@ completed: boolean
 interface SubjectCardProps {
 name: string
 topics: Topic[]
+subjectId?: string
 }
 
-export default function SubjectCard({ name, topics }: SubjectCardProps) {
+export default function SubjectCard({ name, topics, subjectId }: SubjectCardProps) {
 
 const [expanded, setExpanded] = useState(false)
 const [topicStates, setTopicStates] = useState(topics)
@@ -110,6 +112,7 @@ return (
             </span>
           </div>
         ))}
+        {subjectId && <AddTopic subjectId={subjectId} />}
       </div>
     )}
   </div>
