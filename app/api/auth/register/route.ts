@@ -54,6 +54,7 @@ export async function POST(req: Request) {
 
         return response;
     } catch (error: any) {
+        console.log(error);
         // duplicate key error
         if (error.code === 11000) {
             const field = Object.keys(error.keyValue)[0];
