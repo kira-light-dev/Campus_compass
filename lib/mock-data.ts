@@ -114,33 +114,33 @@ export const resources = [
   {
     category: "YouTube",
     items: [
-      { id: 1, name: "Abdul Bari - Algorithms", url: "#", description: "Best for DSA concepts" },
-      { id: 2, name: "Gate Smashers - DBMS", url: "#", description: "Complete DBMS playlist" },
-      { id: 3, name: "Jenny's Lectures - OS", url: "#", description: "Operating Systems tutorials" },
+      { id: 1, name: "Abdul Bari - Algorithms", url: "https://www.youtube.com/playlist?list=PLDN4rrl48XKpZkf03iYFl-O29szjTrs_O", description: "Best for DSA concepts" },
+      { id: 2, name: "Gate Smashers - DBMS", url: "https://www.youtube.com/playlist?list=PLxCzCOWd7aiFAN6I8CuViBuCdJgiOkT2Y", description: "Complete DBMS playlist" },
+      { id: 3, name: "Jenny's Lectures - OS", url: "https://www.youtube.com/playlist?list=PLdo5W4Nhv31a5ucW_S1K3-x6ztBRD-PNa", description: "Operating Systems tutorials" },
     ],
   },
   {
     category: "Notes",
     items: [
-      { id: 1, name: "DSA Handwritten Notes", url: "#", description: "Community notes" },
-      { id: 2, name: "DBMS Quick Reference", url: "#", description: "Cheat sheet for exams" },
-      { id: 3, name: "OS One-Shot Notes", url: "#", description: "Last minute revision" },
+      { id: 1, name: "DSA Handwritten Notes", url: "https://drive.google.com/drive/folders/1hNO0P7UWrOh8nk7ZoMDsvAsMpVqcJaKa", description: "Community notes" },
+      { id: 2, name: "DBMS Quick Reference", url: "https://www.geeksforgeeks.org/dbms-cheat-sheet/", description: "Cheat sheet for exams" },
+      { id: 3, name: "OS One-Shot Notes", url: "https://www.geeksforgeeks.org/operating-systems-cheat-sheet/", description: "Last minute revision" },
     ],
   },
   {
     category: "Books",
     items: [
-      { id: 1, name: "CLRS - Introduction to Algorithms", url: "#", description: "The DSA bible" },
-      { id: 2, name: "Database System Concepts", url: "#", description: "Silberschatz textbook" },
-      { id: 3, name: "Operating System Concepts", url: "#", description: "Galvin textbook" },
+      { id: 1, name: "CLRS - Introduction to Algorithms", url: "https://archive.org/details/cormen-thomas-h-leiserson-charles-e-rivest-ronald-l-stein-clifford-introduction-to-algorithms-4th", description: "The DSA bible" },
+      { id: 2, name: "Database System Concepts", url: "https://www.db-book.com/", description: "Silberschatz textbook" },
+      { id: 3, name: "Operating System Concepts", url: "https://os-book.com/OS10/index.html", description: "Galvin textbook" },
     ],
   },
   {
     category: "Practice",
     items: [
-      { id: 1, name: "LeetCode", url: "#", description: "Coding practice platform" },
-      { id: 2, name: "HackerRank", url: "#", description: "Interview prep challenges" },
-      { id: 3, name: "GeeksforGeeks", url: "#", description: "CS theory & practice" },
+      { id: 1, name: "LeetCode", url: "https://leetcode.com/problemset/", description: "Coding practice platform" },
+      { id: 2, name: "HackerRank", url: "https://www.hackerrank.com/dashboard", description: "Interview prep challenges" },
+      { id: 3, name: "GeeksforGeeks", url: "https://www.geeksforgeeks.org/", description: "CS theory & practice" },
     ],
   },
 ]
