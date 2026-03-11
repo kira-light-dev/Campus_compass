@@ -5,6 +5,7 @@ import connectDB from "@/lib/mongodb"
 import Subject from "@/databases/subjects.model"
 import AddSubject from "@/components/subjects/add-subject"
 import AddTopic from "@/components/subjects/add-topic"
+export const dynamic = "force-dynamic"
 
 export default async function SubjectsPage() {
 
