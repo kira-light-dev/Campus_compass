@@ -2,35 +2,37 @@
 
 import { useState } from "react"
 import AddTopic from "@/components/subjects/add-topic"
+import { Progress } from "@/components/ui/progress"
 
-interface Topic {
-  _id: string
-  name: string
-  completed: boolean
-}
-
+interface Topic { _id: string; name: string; completed: boolean }
 interface SubjectCardProps {
   subjectId: string
   name: string
   topics: Topic[]
+  onProgressChange?: () => void
 }
 
-export default function SubjectCard({ subjectId, name, topics }: SubjectCardProps) {
-
+export default function SubjectCard({ subjectId, name, topics, onProgressChange }: SubjectCardProps) {
   const [expanded, setExpanded] = useState(false)
   const [topicStates, setTopicStates] = useState(topics)
 
-  const toggleTopic = (_id: string) => {
-    setTopicStates((prev) =>
-      prev.map((t) => t._id === _id ? { ...t, completed: !t.completed } : t)
-    )
+  const toggleTopic = async (_id: string) => {
+    const topic = topicStates.find(t => t._id === _id)
+    if (!topic) return
+    const newCompleted = !topic.completed
+    setTopicStates(prev => prev.map(t => t._id === _id ? { ...t, completed: newCompleted } : t))
+    await fetch(`/api/subjects/${subjectId}/topic/${_id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ completed: newCompleted })
+    })
+    onProgressChange?.()
   }
 
   const deleteTopic = async (topicId: string) => {
-    await fetch(`/api/subjects/${subjectId}/topic/${topicId}`, {
-      method: "DELETE"
-    })
-    setTopicStates((prev) => prev.filter((t) => t._id !== topicId))
+    await fetch(`/api/subjects/${subjectId}/topic/${topicId}`, { method: "DELETE" })
+    setTopicStates(prev => prev.filter(t => t._id !== topicId))
+    onProgressChange?.()
   }
 
   const deleteSubject = async () => {
@@ -39,68 +41,36 @@ export default function SubjectCard({ subjectId, name, topics }: SubjectCardProp
     window.location.reload()
   }
 
-  const completedCount = topicStates.filter((t) => t.completed).length
-  const currentProgress =
-    topicStates.length === 0
-      ? 0
-      : Math.round((completedCount / topicStates.length) * 100)
+  const completedCount = topicStates.filter(t => t.completed).length
+  const currentProgress = topicStates.length === 0 ? 0 : Math.round((completedCount / topicStates.length) * 100)
 
   return (
-    <div style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "16px", marginBottom: "16px" }}>
-
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h3>{name}</h3>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <button
-            onClick={deleteSubject}
-            style={{ fontSize: "14px", cursor: "pointer", border: "none", background: "none", color: "#ef4444" }}
-          >
-            🗑
-          </button>
-          <button
-            onClick={() => setExpanded(!expanded)}
-            style={{ fontSize: "18px", cursor: "pointer", border: "none", background: "none" }}
-          >
-            {expanded ? "▲" : "▼"}
-          </button>
+    <div className="rounded-lg border border-border bg-card p-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-foreground">{name}</h3>
+        <div className="flex items-center gap-2">
+          <button onClick={deleteSubject} className="cursor-pointer border-none bg-transparent text-destructive hover:opacity-70 text-sm">🗑</button>
+          <button onClick={() => setExpanded(!expanded)} className="cursor-pointer border-none bg-transparent text-foreground hover:opacity-70 text-lg">{expanded ? "▲" : "▼"}</button>
         </div>
       </div>
 
-      {/* Progress */}
-      <div style={{ marginTop: "10px" }}>
-        <div style={{ height: "8px", background: "#eee", borderRadius: "4px", overflow: "hidden" }}>
-          <div style={{ width: `${currentProgress}%`, background: "#3b82f6", height: "100%" }} />
+      <div className="mt-3">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-xs text-muted-foreground">{completedCount}/{topicStates.length} topics</span>
+          <span className="text-xs font-medium text-foreground">{currentProgress}%</span>
         </div>
-        <p style={{ fontSize: "12px", marginTop: "4px" }}>{currentProgress}%</p>
+        <Progress value={currentProgress} />
       </div>
 
-      {/* Topics */}
       {expanded && (
-        <div style={{ marginTop: "12px" }}>
-          {topicStates.map((topic) => (
-            <div key={topic._id} style={{ display: "flex", gap: "8px", marginBottom: "6px", alignItems: "center" }}>
-              <input
-                type="checkbox"
-                checked={topic.completed}
-                onChange={() => toggleTopic(topic._id)}
-              />
-              <span style={{
-                flex: 1,
-                textDecoration: topic.completed ? "line-through" : "none",
-                color: topic.completed ? "#888" : "#000"
-              }}>
-                {topic.name}
-              </span>
-              <button
-                onClick={() => deleteTopic(topic._id)}
-                style={{ border: "none", background: "none", cursor: "pointer", color: "#ef4444", fontSize: "14px" }}
-              >
-                ✕
-              </button>
+        <div className="mt-3 space-y-2">
+          {topicStates.map(topic => (
+            <div key={topic._id} className="flex items-center gap-2">
+              <input type="checkbox" checked={topic.completed} onChange={() => toggleTopic(topic._id)} className="cursor-pointer" />
+              <span className={`flex-1 text-sm ${topic.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>{topic.name}</span>
+              <button onClick={() => deleteTopic(topic._id)} className="cursor-pointer border-none bg-transparent text-destructive hover:opacity-70 text-sm">✕</button>
             </div>
           ))}
-
           <AddTopic subjectId={subjectId} />
         </div>
       )}

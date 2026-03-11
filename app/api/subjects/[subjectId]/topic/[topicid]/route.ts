@@ -4,7 +4,7 @@ import Subject from "@/databases/subjects.model"
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ subjectId: string, topicId: string }> }
+  { params }: { params: Promise<{ subjectId: string; topicId: string }> }
 ) {
   try {
     await connectDB()
@@ -20,10 +20,33 @@ export async function DELETE(
       return NextResponse.json({ message: "Subject not found" }, { status: 404 })
     }
 
-    return NextResponse.json(subject, { status: 200 })
-
+    return NextResponse.json(JSON.parse(JSON.stringify(subject)), { status: 200 })
   } catch (error) {
-    console.error(error)
     return NextResponse.json({ message: "Failed to delete topic" }, { status: 500 })
+  }
+}
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ subjectId: string; topicId: string }> }
+) {
+  try {
+    await connectDB()
+    const { subjectId, topicId } = await params
+    const { completed } = await req.json()
+
+    const subject = await Subject.findOneAndUpdate(
+      { _id: subjectId, "topics._id": topicId },
+      { $set: { "topics.$.completed": completed } },
+      { new: true }
+    )
+
+    if (!subject) {
+      return NextResponse.json({ message: "Topic not found" }, { status: 404 })
+    }
+
+    return NextResponse.json(JSON.parse(JSON.stringify(subject)), { status: 200 })
+  } catch (error) {
+    return NextResponse.json({ message: "Failed to update topic" }, { status: 500 })
   }
 }

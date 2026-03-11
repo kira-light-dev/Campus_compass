@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import connectDB from "@/lib/mongodb"
 import Note from "@/databases/note.model"
-import { put } from "@vercel/blob"
 
 export async function GET() {
   try {
@@ -20,13 +19,22 @@ export async function POST(req: Request) {
     const file = formData.get("file") as File
     const name = formData.get("name") as string
 
-    const blob = await put(file.name, file, { access: "public" })
+    if (!file || !name?.trim()) {
+      return NextResponse.json({ message: "File and name are required" }, { status: 400 })
+    }
+
+    // Convert file to base64 for storage in MongoDB
+    const arrayBuffer = await file.arrayBuffer()
+    const base64 = Buffer.from(arrayBuffer).toString("base64")
+    const dataUrl = `data:${file.type};base64,${base64}`
+
     const note = await Note.create({
       name,
-      url: blob.url,
+      url: dataUrl,
       fileType: file.type,
-      size: file.size
+      size: file.size,
     })
+
     return NextResponse.json(JSON.parse(JSON.stringify(note)), { status: 201 })
   } catch (error) {
     console.error("Upload error:", error)

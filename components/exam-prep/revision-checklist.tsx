@@ -4,11 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 
-interface Task {
-  _id: string
-  task: string
-  completed: boolean
-}
+interface Task { _id: string; task: string; completed: boolean }
 
 export function RevisionChecklist() {
   const [tasks, setTasks] = useState<Task[]>([])
@@ -16,7 +12,9 @@ export function RevisionChecklist() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    fetch("/api/checklist").then(r => r.json()).then(setTasks)
+    fetch("/api/checklist")
+      .then(r => r.json())
+      .then(data => setTasks(Array.isArray(data) ? data : []))
   }, [])
 
   const addTask = async () => {
@@ -27,9 +25,11 @@ export function RevisionChecklist() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ task: newTask })
     })
-    const created = await res.json()
-    setTasks(prev => [created, ...prev])
-    setNewTask("")
+    if (res.ok) {
+      const created = await res.json()
+      setTasks(prev => [...prev, created])
+      setNewTask("")
+    }
     setLoading(false)
   }
 
@@ -48,55 +48,58 @@ export function RevisionChecklist() {
   }
 
   return (
-    <Card>
+    <Card className="flex flex-col">
       <CardHeader>
         <CardTitle>Revision Checklist</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {/* Add Task */}
-        <div style={{ display: "flex", gap: "8px" }}>
+      <CardContent className="flex flex-col flex-1 gap-3">
+        {/* Task list */}
+        <div className="flex-1 space-y-2">
+          {tasks.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4">No tasks yet. Add one below!</p>
+          )}
+          {tasks.map(task => (
+            <div key={task._id} className="flex items-center gap-3">
+              <Checkbox
+                id={`task-${task._id}`}
+                checked={task.completed}
+                onCheckedChange={() => toggleTask(task._id, task.completed)}
+                className="cursor-pointer"
+              />
+              <label
+                htmlFor={`task-${task._id}`}
+                className={`text-sm flex-1 cursor-pointer ${task.completed ? "text-muted-foreground line-through" : "text-foreground"}`}
+              >
+                {task.task}
+              </label>
+              <button
+                onClick={() => deleteTask(task._id)}
+                className="cursor-pointer border-none bg-transparent text-destructive hover:opacity-70 text-base"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Add task — always at bottom */}
+        <div className="flex gap-2 pt-2 border-t border-border">
           <input
             type="text"
             placeholder="Add a task..."
             value={newTask}
             onChange={e => setNewTask(e.target.value)}
             onKeyDown={e => e.key === "Enter" && addTask()}
-            style={{ flex: 1, border: "1px solid #ddd", borderRadius: "6px", padding: "6px 10px", fontSize: "14px" }}
+            className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-text"
           />
           <button
             onClick={addTask}
-            disabled={loading}
-            style={{ padding: "6px 14px", backgroundColor: "#3b82f6", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px" }}
+            disabled={loading || !newTask.trim()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium cursor-pointer hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           >
             Add
           </button>
         </div>
-
-        {tasks.map((task) => (
-          <div key={task._id} className="flex items-center gap-3">
-            <Checkbox
-              id={`task-${task._id}`}
-              checked={task.completed}
-              onCheckedChange={() => toggleTask(task._id, task.completed)}
-            />
-            <label
-              htmlFor={`task-${task._id}`}
-              className={`text-sm flex-1 ${task.completed ? "text-muted-foreground line-through" : "text-foreground"}`}
-            >
-              {task.task}
-            </label>
-            <button
-              onClick={() => deleteTask(task._id)}
-              style={{ border: "none", background: "none", cursor: "pointer", color: "#ef4444", fontSize: "16px" }}
-            >
-              ✕
-            </button>
-          </div>
-        ))}
-
-        {tasks.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-4">No tasks yet. Add one above!</p>
-        )}
       </CardContent>
     </Card>
   )

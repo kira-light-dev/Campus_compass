@@ -11,26 +11,18 @@ export async function POST(
     const { subjectId } = await params
     const body = await req.json()
 
-    // Debug: check if subject exists first
-    const exists = await Subject.findById(subjectId)
-    console.log("Subject exists:", exists)
-
     const subject = await Subject.findByIdAndUpdate(
-      '69af173a001f0a395b423bab',
+      subjectId,
       { $push: { topics: { name: body.name, completed: false } } },
       { new: true }
     )
-
-    console.log("Updated subject:", subject)
 
     if (!subject) {
       return NextResponse.json({ message: "Subject not found" }, { status: 404 })
     }
 
-    return NextResponse.json(subject, { status: 200 })
-
+    return NextResponse.json(JSON.parse(JSON.stringify(subject)), { status: 200 })
   } catch (error) {
-    console.error("Full error:", error)
     return NextResponse.json({ message: "Failed to add topic" }, { status: 500 })
   }
 }
