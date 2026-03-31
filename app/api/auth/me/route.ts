@@ -6,6 +6,21 @@ import User from "@/databases/user.model"
 
 export async function GET() {
     try {
+        // When DISABLE_AUTH is true, return a mock user without checking tokens
+        if (process.env.DISABLE_AUTH === "true") {
+            return NextResponse.json({
+                user: {
+                    _id: "dev-mock-user",
+                    name: "Dev User",
+                    email: "dev@example.com",
+                    branch: "CSE",
+                    year: 3,
+                    collegeId: "DEV001",
+                    createdAt: new Date().toISOString(),
+                },
+            }, { status: 200 })
+        }
+
         await connectDB()
 
         // ✅ FIX: cookies() is async
